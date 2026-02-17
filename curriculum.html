@@ -186,6 +186,68 @@
             color: #aaa;
             margin-top: 8px;
         }
+
+        .next-up {
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            color: white;
+            border-radius: 12px;
+            padding: 28px 32px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .next-up .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            opacity: 0.75;
+            margin-bottom: 6px;
+        }
+
+        .next-up h2 {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        .next-up p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .btn-start {
+            display: inline-block;
+            background: white;
+            color: #1b4332;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: opacity 0.2s;
+        }
+
+        .btn-start:hover {
+            opacity: 0.88;
+        }
+
+        .topic-item a.topic-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .topic-item a.topic-link:hover .topic-title {
+            text-decoration: underline;
+            color: #2d6a4f;
+        }
     </style>
 </head>
 <body>
@@ -194,6 +256,15 @@
     <h1>커리큘럼 진행 현황</h1>
     <p>학습 로드맵 및 진도 추적</p>
 </header>
+
+<div class="next-up">
+    <div>
+        <div class="label">지금 바로 시작하기</div>
+        <h2>React Router &amp; SPA</h2>
+        <p>클라이언트 라우팅, 동적 경로, 보호된 라우트</p>
+    </div>
+    <a class="btn-start" href="lessons/react-router.html">학습 시작 →</a>
+</div>
 
 <div class="summary">
     <div class="summary-card">

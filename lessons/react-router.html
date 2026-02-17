@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Router &amp; SPA — 커리큘럼</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb {
+            font-size: 0.82rem;
+            color: #888;
+            margin-bottom: 24px;
+        }
+
+        .breadcrumb a { color: #2d6a4f; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+
+        .lesson-header {
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            color: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 28px;
+        }
+
+        .lesson-header .stage {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            opacity: 0.7;
+            margin-bottom: 8px;
+        }
+
+        .lesson-header h1 {
+            font-size: 1.7rem;
+            margin-bottom: 10px;
+        }
+
+        .lesson-header p {
+            opacity: 0.85;
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            font-size: 1.05rem;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f5e9;
+        }
+
+        .card h3 {
+            font-size: 0.95rem;
+            color: #2d6a4f;
+            margin: 20px 0 8px;
+        }
+
+        .card h3:first-of-type { margin-top: 0; }
+
+        .card p, .card li {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .card ul, .card ol {
+            padding-left: 20px;
+        }
+
+        .card li { margin-bottom: 6px; }
+
+        pre {
+            background: #1a1a2e;
+            color: #a8d8b9;
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 12px 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        code {
+            background: #e8f5e9;
+            color: #1b4332;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist .check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 1px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: transparent;
+            transition: all 0.15s;
+        }
+
+        .checklist .check.checked {
+            background: #2d6a4f;
+            border-color: #2d6a4f;
+            color: white;
+        }
+
+        .nav-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .btn-outline {
+            border: 2px solid #2d6a4f;
+            color: #2d6a4f;
+        }
+
+        .btn-outline:hover { background: #e8f5e9; }
+
+        .btn-primary {
+            background: #2d6a4f;
+            color: white;
+        }
+
+        .btn-primary:hover { background: #1b4332; }
+
+        .tip {
+            background: #fffbeb;
+            border-left: 4px solid #f9c74f;
+            border-radius: 0 8px 8px 0;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 0.88rem;
+            color: #555;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<p class="breadcrumb">
+    <a href="../index.html">홈</a> &rsaquo;
+    <a href="../curriculum.html">커리큘럼</a> &rsaquo;
+    React Router &amp; SPA
+</p>
+
+<div class="lesson-header">
+    <div class="stage">2단계 — 프론트엔드</div>
+    <h1>React Router &amp; SPA</h1>
+    <p>단일 페이지 애플리케이션(SPA)에서 클라이언트 사이드 라우팅을 구현하는 방법을 배웁니다. React Router v6를 사용하여 동적 경로, 중첩 라우트, 보호된 라우트를 설계합니다.</p>
+    <div class="badge-row">
+        <span class="badge">React Router v6</span>
+        <span class="badge">SPA</span>
+        <span class="badge">클라이언트 라우팅</span>
+        <span class="badge">진행 중</span>
+    </div>
+</div>
+
+<!-- 학습 목표 -->
+<div class="card">
+    <h2>학습 목표</h2>
+    <ul class="checklist" id="goals">
+        <li>
+            <span class="check" onclick="toggle(this)">✓</span>
+            <span>SPA의 개념과 전통적인 MPA와의 차이 이해</span>
+        </li>
+        <li>
+            <span class="check" onclick="toggle(this)">✓</span>
+            <span>React Router v6 설치 및 기본 설정</span>
+        </li>
+        <li>
+            <span class="check" onclick="toggle(this)"></span>
+            <span><code>&lt;BrowserRouter&gt;</code>, <code>&lt;Routes&gt;</code>, <code>&lt;Route&gt;</code> 컴포넌트 사용</span>
+        </li>
+        <li>
+            <span class="check" onclick="toggle(this)"></span>
+            <span>동적 경로 파라미터 (<code>:id</code>) 처리</span>
+        </li>
+        <li>
+            <span class="check" onclick="toggle(this)"></span>
+            <span>중첩 라우트(Nested Routes) 구성</span>
+        </li>
+        <li>
+            <span class="check" onclick="toggle(this)"></span>
+            <span>인증 기반 보호된 라우트(Protected Route) 구현</span>
+        </li>
+    </ul>
+</div>
+
+<!-- 핵심 개념 -->
+<div class="card">
+    <h2>핵심 개념</h2>
+
+    <h3>SPA(Single Page Application)란?</h3>
+    <p>SPA는 최초 로드 시 HTML 파일 하나를 받아온 뒤, 이후 페이지 이동 시 서버에 새 요청을 보내지 않고 JavaScript가 DOM을 직접 업데이트합니다. URL은 바뀌지만 전체 페이지가 새로고침되지 않아 빠른 사용자 경험을 제공합니다.</p>
+
+    <h3>기본 설정</h3>
+    <pre><code>npm install react-router-dom</code></pre>
+    <pre><code>// main.jsx
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  &lt;BrowserRouter&gt;
+    &lt;App /&gt;
+  &lt;/BrowserRouter&gt;
+);</code></pre>
+
+    <h3>라우트 정의</h3>
+    <pre><code>// App.jsx
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import About from './pages/About';
+import UserProfile from './pages/UserProfile';
+
+function App() {
+  return (
+    &lt;Routes&gt;
+      &lt;Route path="/" element={&lt;Home /&gt;} /&gt;
+      &lt;Route path="/about" element={&lt;About /&gt;} /&gt;
+      &lt;Route path="/users/:id" element={&lt;UserProfile /&gt;} /&gt;
+    &lt;/Routes&gt;
+  );
+}</code></pre>
+
+    <h3>동적 경로 파라미터</h3>
+    <pre><code>// pages/UserProfile.jsx
+import { useParams } from 'react-router-dom';
+
+function UserProfile() {
+  const { id } = useParams();
+  return &lt;h1&gt;사용자 ID: {id}&lt;/h1&gt;;
+}</code></pre>
+
+    <h3>보호된 라우트</h3>
+    <pre><code>// components/ProtectedRoute.jsx
+import { Navigate } from 'react-router-dom';
+
+function ProtectedRoute({ children }) {
+  const isAuthenticated = !!localStorage.getItem('token');
+  return isAuthenticated ? children : &lt;Navigate to="/login" replace /&gt;;
+}
+
+// App.jsx 에서 사용
+&lt;Route
+  path="/dashboard"
+  element={
+    &lt;ProtectedRoute&gt;
+      &lt;Dashboard /&gt;
+    &lt;/ProtectedRoute&gt;
+  }
+/&gt;</code></pre>
+
+    <div class="tip">
+        <strong>팁:</strong> <code>replace</code> prop을 <code>&lt;Navigate&gt;</code>에 추가하면 브라우저 히스토리에 리다이렉트 기록이 쌓이지 않아 뒤로가기 버튼이 의도대로 동작합니다.
+    </div>
+</div>
+
+<!-- 실습 과제 -->
+<div class="card">
+    <h2>실습 과제</h2>
+    <ol>
+        <li>Create React App 또는 Vite로 새 프로젝트를 생성하고 React Router를 설치하세요.</li>
+        <li>홈(<code>/</code>), 소개(<code>/about</code>), 게시글 목록(<code>/posts</code>), 게시글 상세(<code>/posts/:id</code>) 4개의 라우트를 만드세요.</li>
+        <li>로그인 여부에 따라 <code>/dashboard</code>를 보호하는 <code>ProtectedRoute</code>를 구현하세요.</li>
+        <li>존재하지 않는 경로에 대해 404 페이지를 표시하는 Catch-all 라우트(<code>path="*"</code>)를 추가하세요.</li>
+    </ol>
+</div>
+
+<!-- 네비게이션 -->
+<div class="nav-row">
+    <a class="btn btn-outline" href="../curriculum.html">← 커리큘럼으로</a>
+    <a class="btn btn-primary" href="api-fetching.html">다음: API 연동 &amp; 데이터 페칭 →</a>
+</div>
+
+<script>
+    function toggle(el) {
+        el.classList.toggle('checked');
+        el.textContent = el.classList.contains('checked') ? '✓' : '';
+    }
+
+    // 체크 상태 localStorage 저장/복원
+    document.addEventListener('DOMContentLoaded', () => {
+        const checks = document.querySelectorAll('.check');
+        checks.forEach((el, i) => {
+            if (localStorage.getItem('react-router-check-' + i) === '1') {
+                el.classList.add('checked');
+                el.textContent = '✓';
+            }
+        });
+    });
+
+    const originalToggle = toggle;
+    window.toggle = function(el) {
+        originalToggle(el);
+        const checks = document.querySelectorAll('.check');
+        checks.forEach((c, i) => {
+            localStorage.setItem('react-router-check-' + i, c.classList.contains('checked') ? '1' : '0');
+        });
+    };
+</script>
+
+</body>
+</html>
