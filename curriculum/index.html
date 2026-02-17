@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>전체 커리큘럼 | Claude Code 실전 교육</title>
+  <style>
+    :root {
+      --primary: #2D3A8C; --accent: #E87040; --accent-light: #FFF3EC;
+      --green: #1A7F5A; --green-light: #E8F8F2;
+      --bg: #F7F8FC; --white: #FFFFFF; --text: #1E1E2E;
+      --text-muted: #6B7280; --border: #E5E7EB;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08); --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    nav { background: var(--white); border-bottom: 1px solid var(--border); }
+    .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; height: 60px; }
+    .nav-back { color: var(--text-muted); font-size: 0.9rem; }
+    .nav-title { font-weight: 800; color: var(--primary); font-size: 1rem; }
+    .page-header { background: linear-gradient(135deg,#1E2A7A,#2D3A8C); color: white; padding: 48px 24px; }
+    .page-header-inner { max-width: 1100px; margin: 0 auto; }
+    .page-header h1 { font-size: 2rem; font-weight: 900; margin-bottom: 8px; }
+    .page-header p { opacity: 0.85; font-size: 1rem; }
+    main { max-width: 1100px; margin: 0 auto; padding: 48px 24px; }
+    .week-row { display: flex; gap: 24px; margin-bottom: 24px; align-items: stretch; }
+    .week-label { width: 120px; flex-shrink: 0; background: var(--white); border-radius: var(--radius); padding: 20px 16px; text-align: center; box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: center; }
+    .week-label .wk { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    .week-label .wn { font-size: 1.8rem; font-weight: 900; color: var(--primary); }
+    .week-label.day0 .wn { color: var(--accent); }
+    .week-label.capstone .wn { color: var(--green); }
+    .week-card { flex: 1; background: var(--white); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); border-left: 4px solid var(--primary); }
+    .week-card.day0 { border-left-color: var(--accent); }
+    .week-card.capstone { border-left-color: var(--green); }
+    .week-card.advanced { border-left-color: #9CA3AF; }
+    .week-tag { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+    .tag-start { background: #FFF3EC; color: var(--accent); }
+    .tag-fluency { background: #EEF1FF; color: var(--primary); }
+    .tag-code { background: #EEF1FF; color: var(--primary); }
+    .tag-track { background: var(--green-light); color: var(--green); }
+    .tag-capstone { background: var(--green-light); color: var(--green); }
+    .tag-advanced { background: #F3F4F6; color: #6B7280; }
+    .week-card h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 8px; }
+    .week-card .week-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px; }
+    .lesson-list { list-style: none; padding: 0; }
+    .lesson-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+    .lesson-list li:last-child { border-bottom: none; }
+    .lesson-num { background: var(--bg); border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); flex-shrink: 0; }
+    .lesson-outcome { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; margin-left: auto; white-space: nowrap; }
+    .lesson-outcome.green { background: var(--green-light); color: var(--green); }
+    .week-footer { margin-top: 16px; display: flex; align-items: center; justify-content: space-between; }
+    .week-hw { font-size: 0.82rem; color: var(--text-muted); background: var(--bg); padding: 8px 14px; border-radius: 8px; }
+    .week-hw strong { color: var(--text); }
+    .btn-link { display: inline-block; padding: 8px 18px; background: var(--primary); color: white; border-radius: 8px; font-size: 0.85rem; font-weight: 700; }
+    .btn-link:hover { background: #1E2A7A; color: white; text-decoration: none; }
+    .btn-link.accent { background: var(--accent); }
+    .btn-link.green { background: var(--green); }
+    .btn-link.gray { background: #9CA3AF; }
+    .section-divider { display: flex; align-items: center; gap: 16px; margin: 32px 0 24px; }
+    .section-divider span { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); white-space: nowrap; }
+    .section-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+    @media(max-width:640px) { .week-row { flex-direction: column; } .week-label { width: 100%; flex-direction: row; padding: 12px 16px; justify-content: flex-start; gap: 12px; align-items: center; } }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-back">← 홈</a>
+    <span style="color:var(--border)">|</span>
+    <span class="nav-title">전체 커리큘럼</span>
+  </div>
+</nav>
+<div class="page-header">
+  <div class="page-header-inner">
+    <h1>전체 커리큘럼</h1>
+    <p>30분 첫 성공부터 매주 돌아가는 자동화 완성까지 — 6주 + Day 0 + 심화</p>
+  </div>
+</div>
+<main>
+
+  <!-- DAY 0 -->
+  <div class="section-divider"><hr><span>필수 시작</span><hr></div>
+  <div class="week-row">
+    <div class="week-label day0"><span class="wk">Day</span><span class="wn">0</span></div>
+    <div class="week-card day0">
+      <span class="week-tag tag-start">필수 · 30분</span>
+      <h2>30분 첫 성공 세션 — "나도 할 수 있다"</h2>
+      <p class="week-desc">설치 없이, 코딩 없이. Claude.ai 웹에서 내 귀찮은 일을 AI에게 위임하는 첫 경험.</p>
+      <ul class="lesson-list">
+        <li><span class="lesson-num">D0-1</span> 내 반복 업무 1개 말하기 (5분)<span class="lesson-outcome">동기 확인</span></li>
+        <li><span class="lesson-num">D0-2</span> Claude.ai에서 그 일 위임해보기 (5분)<span class="lesson-outcome">첫 성공</span></li>
+        <li><span class="lesson-num">D0-3</span> 결과 보고 수정 요청 — "이렇게 바꿔줘" (10분)<span class="lesson-outcome">반복 실습</span></li>
+        <li><span class="lesson-num">D0-4</span> 이걸 자동화하면? 다음 단계 상상하기 (10분)<span class="lesson-outcome">방향 설정</span></li>
+      </ul>
+      <div class="week-footer">
+        <div class="week-hw"><strong>과제:</strong> 귀찮은 일 목록 3개 메모해 오기</div>
+        <a href="week0.html" class="btn-link accent">→ 시작하기</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 1 -->
+  <div class="section-divider"><hr><span>공통 코어</span><hr></div>
+  <div class="week-row">
+    <div class="week-label"><span class="wk">Week</span><span class="wn">1</span></div>
+    <div class="week-card">
+      <span class="week-tag tag-fluency">AI Fluency</span>
+      <h2>AI와 대화하는 법 — 위임문(프롬프트) 작성</h2>
+      <p class="week-desc">좋은 위임이 좋은 결과를 만듭니다. 실패 사례에서 시작해 원칙을 추출하고, 내 위임문을 완성합니다.</p>
+      <ul class="lesson-list">
+        <li><span class="lesson-num">1-1</span> 이렇게 시키면 실패한다 — 나쁜 위임 10가지<span class="lesson-outcome">판별력</span></li>
+        <li><span class="lesson-num">1-2</span> 이렇게 하면 잘 된다 — 성공 사례 비교<span class="lesson-outcome">패턴 인식</span></li>
+        <li><span class="lesson-num">1-3</span> AI Fluency 4D 프레임: 위임·설명·판별·성실<span class="lesson-outcome">원칙 정리</span></li>
+        <li><span class="lesson-num">1-4</span> 내 귀찮은 일을 위임문으로 쓰기 (템플릿 활용)<span class="lesson-outcome">첫 위임문</span></li>
+        <li><span class="lesson-num">1-5</span> Claude가 틀릴 수 있다 — 검증하는 습관<span class="lesson-outcome">안전 원칙</span></li>
+      </ul>
+      <div class="week-footer">
+        <div class="week-hw"><strong>과제:</strong> "우리 집 반복 업무 10개" 목록 + 1개 절차 분해</div>
+        <a href="week1.html" class="btn-link">→ Week 1 보기</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 2 -->
+  <div class="week-row">
+    <div class="week-label"><span class="wk">Week</span><span class="wn">2</span></div>
+    <div class="week-card">
+      <span class="week-tag tag-code">Claude Code</span>
+      <h2>Claude Code 입문 — 첫 파일 자동화 완성</h2>
+      <p class="week-desc">Claude Code가 무엇인지 이해하고, 터미널 없이 또는 로컬 설치로 첫 자동화를 완성합니다.</p>
+      <ul class="lesson-list">
+        <li><span class="lesson-num">2-1</span> Claude Code vs Claude.ai — 언제 무엇을 쓰나<span class="lesson-outcome">개념 정리</span></li>
+        <li><span class="lesson-num">2-2</span> [기본] 파일 올려서 Claude에게 처리시키기<span class="lesson-outcome">터미널 없이</span></li>
+        <li><span class="lesson-num">2-3</span> [확장] Claude Code 설치 및 첫 실행<span class="lesson-outcome">로컬 환경</span></li>
+        <li><span class="lesson-num">2-4</span> 폴더/파일/경로 — 딱 필요한 만큼만<span class="lesson-outcome">기초 감각</span></li>
+        <li><span class="lesson-num">2-5</span> 첫 자동화: 파일 이름 규칙 통일<span class="lesson-outcome">완성 결과물</span></li>
+      </ul>
+      <div class="week-footer">
+        <div class="week-hw"><strong>과제:</strong> Downloads 폴더 정리 자동화 (백업 포함)</div>
+        <a href="week2.html" class="btn-link">→ Week 2 보기</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 3~4 -->
+  <div class="section-divider"><hr><span>페르소나 트랙 (3개 중 1개 선택)</span><hr></div>
+  <div class="week-row">
+    <div class="week-label" style="background:#EEF1FF;"><span class="wk">Week</span><span class="wn" style="font-size:1.3rem;">3~4</span></div>
+    <div class="week-card" style="border-left-color:var(--green);">
+      <span class="week-tag tag-track">트랙 선택 · 2주</span>
+      <h2>페르소나 트랙 — 내 상황에 맞는 자동화 2개 완성</h2>
+      <p class="week-desc">3개 트랙 중 본인에게 맞는 것을 선택. 각 트랙은 Week 3(기초 자동화)과 Week 4(응용 자동화)로 구성.</p>
+      <ul class="lesson-list">
+        <li><span class="lesson-num">A트랙</span> 가족·일상 — 가계부 정리, 주간 일정 요약, 루틴 체크리스트<span class="lesson-outcome green">가족/주부</span></li>
+        <li><span class="lesson-num">B트랙</span> 직장인 — 회의록 처리, 주간 보고 초안, 파일 자동 정리<span class="lesson-outcome">4050 직장인</span></li>
+        <li><span class="lesson-num">C트랙</span> 학생 — 노트 요약, 퀴즈 생성, 오답노트, 에세이 구조화<span class="lesson-outcome green">중고등학생</span></li>
+      </ul>
+      <div class="week-footer">
+        <div class="week-hw"><strong>결과물:</strong> 실제로 작동하는 자동화 2개 완성</div>
+        <a href="tracks.html" class="btn-link green">→ 트랙 선택하기</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 5~6 CAPSTONE -->
+  <div class="section-divider"><hr><span>캡스톤</span><hr></div>
+  <div class="week-row">
+    <div class="week-label capstone"><span class="wk">Week</span><span class="wn" style="font-size:1.3rem;">5~6</span></div>
+    <div class="week-card capstone">
+      <span class="week-tag tag-capstone">캡스톤 · 수료</span>
+      <h2>캡스톤 — "매주 돌아가는 자동화 1개" 완성</h2>
+      <p class="week-desc">명세서, 실행법, 검증 체크리스트, 실패 복구 방법까지 갖춘 완성된 자동화를 만듭니다.</p>
+      <ul class="lesson-list">
+        <li><span class="lesson-num">5-1</span> 캡스톤 주제 선정 + 명세서 초안 작성<span class="lesson-outcome green">명세서</span></li>
+        <li><span class="lesson-num">5-2</span> 자동화 개발 + 테스트<span class="lesson-outcome green">실행법</span></li>
+        <li><span class="lesson-num">6-1</span> 검증 체크리스트 작성 + 실패 복구 시나리오<span class="lesson-outcome green">검증</span></li>
+        <li><span class="lesson-num">6-2</span> 최종 발표 — 가족에게 시연하기<span class="lesson-outcome green">수료</span></li>
+      </ul>
+      <div class="week-footer">
+        <div class="week-hw"><strong>수료 기준:</strong> 4가지 기준 체크리스트 통과</div>
+        <a href="capstone.html" class="btn-link green">→ 캡스톤 가이드</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVANCED -->
+  <div class="section-divider"><hr><span>수료 후 선택 심화</span><hr></div>
+  <div class="week-row">
+    <div class="week-label" style="background:#F3F4F6;"><span class="wk" style="color:#9CA3AF;">심화</span><span class="wn" style="color:#9CA3AF;">+</span></div>
+    <div class="week-card advanced">
+      <span class="week-tag tag-advanced">수료 후 선택</span>
+      <h2>심화 확장 — CLAUDE.md · MCP · 자동화 운영</h2>
+      <p class="week-desc">캡스톤을 완성한 분들을 위한 심화 내용. 기초 없이 이 파트를 먼저 보면 혼란스럽습니다.</p>
+      <ul class="lesson-list">
+        <li><span class="lesson-num">A+1</span> CLAUDE.md — 매번 설명하지 않아도 되게 만들기</li>
+        <li><span class="lesson-num">A+2</span> MCP — 구글 드라이브·캘린더 등 외부 도구 연결</li>
+        <li><span class="lesson-num">A+3</span> 자동화가 망가지는 이유 TOP 5 + 예방법</li>
+        <li><span class="lesson-num">A+4</span> 월 1회 점검 루틴 만들기</li>
+      </ul>
+      <div class="week-footer">
+        <div class="week-hw"><strong>전제 조건:</strong> 캡스톤 수료 완료</div>
+        <a href="advanced.html" class="btn-link gray">→ 심화 보기</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--white); border-radius:var(--radius); padding:28px; box-shadow:var(--shadow); margin-top:40px; text-align:center;">
+    <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:8px;">시작은 여기서부터</h3>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">커리큘럼을 읽었다면 이제 Day 0에서 첫 30분을 시작하세요.</p>
+    <a href="week0.html" style="display:inline-block; padding:14px 32px; background:var(--accent); color:white; border-radius:8px; font-weight:800; font-size:1rem;">Day 0 시작하기 →</a>
+  </div>
+
+</main>
+<footer style="background:#1E1E2E; color:rgba(255,255,255,0.6); padding:24px; text-align:center; font-size:0.85rem; margin-top:40px;">
+  <a href="../index.html" style="color:rgba(255,255,255,0.8);">← 홈으로</a> &nbsp;|&nbsp;
+  <a href="https://www.anthropic.com/learn" target="_blank" style="color:rgba(255,255,255,0.8);">Anthropic Academy</a>
+</footer>
+</body>
+</html>

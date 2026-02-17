@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>레시피 30+ | Claude Code 실전 교육</title>
+  <style>
+    :root {
+      --primary: #2D3A8C; --accent: #E87040; --accent-light: #FFF3EC;
+      --green: #1A7F5A; --green-light: #E8F8F2;
+      --bg: #F7F8FC; --white: #FFFFFF; --text: #1E1E2E;
+      --text-muted: #6B7280; --border: #E5E7EB;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08); --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    a { color: var(--primary); text-decoration: none; }
+    nav { background: var(--white); border-bottom: 1px solid var(--border); }
+    .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 16px; height: 60px; font-size: 0.9rem; color: var(--text-muted); }
+    .page-header { background: linear-gradient(135deg, #1E2A7A, #2D3A8C); color: white; padding: 48px 24px 40px; }
+    .page-header-inner { max-width: 1100px; margin: 0 auto; }
+    .page-header h1 { font-size: 1.9rem; font-weight: 900; margin-bottom: 8px; }
+    .page-header p { opacity: 0.9; font-size: 1rem; }
+    main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 60px; }
+    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+    .filter-btn { padding: 7px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: 2px solid var(--border); background: var(--white); color: var(--text-muted); transition: all 0.15s; }
+    .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .filter-btn.family { }
+    .filter-btn.family.active { background: var(--accent); border-color: var(--accent); }
+    .filter-btn.student { }
+    .filter-btn.student.active { background: var(--green); border-color: var(--green); }
+    .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .recipe-card { background: var(--white); border-radius: var(--radius); padding: 0; box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
+    .recipe-card-top { padding: 20px 20px 14px; flex: 1; }
+    .recipe-tags { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+    .rtag { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    .rtag.work { background: var(--accent-light); color: var(--accent); }
+    .rtag.family { background: #EEF1FF; color: var(--primary); }
+    .rtag.student { background: var(--green-light); color: var(--green); }
+    .rtag.common { background: #F3F4F6; color: #6B7280; }
+    .recipe-card h3 { font-size: 0.95rem; font-weight: 800; margin-bottom: 6px; }
+    .recipe-card p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 10px; }
+    .recipe-io { display: flex; gap: 8px; margin-bottom: 8px; }
+    .io-badge { font-size: 0.72rem; background: var(--bg); border-radius: 6px; padding: 3px 8px; color: var(--text-muted); border: 1px solid var(--border); }
+    .recipe-card-bottom { border-top: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .difficulty { font-size: 0.75rem; color: var(--text-muted); }
+    .difficulty span { font-weight: 700; }
+    .difficulty.easy span { color: var(--green); }
+    .difficulty.mid span { color: var(--accent); }
+    .difficulty.hard span { color: #DC2626; }
+    .expand-btn { font-size: 0.8rem; color: var(--primary); font-weight: 700; cursor: pointer; background: none; border: none; padding: 0; }
+    .recipe-detail { display: none; border-top: 1px solid var(--border); padding: 16px 20px; background: var(--bg); }
+    .recipe-detail.open { display: block; }
+    .code-mini { background: #1E1E2E; color: #E2E8F0; border-radius: 6px; padding: 12px 14px; font-family: 'Courier New', monospace; font-size: 0.78rem; line-height: 1.7; margin-top: 8px; white-space: pre-wrap; }
+    .code-mini .k { color: #FFB347; }
+    .code-mini .v { color: #86EFAC; }
+    .section-label { font-size: 1.1rem; font-weight: 900; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+    .section-label.work { border-bottom-color: var(--accent); color: var(--accent); }
+    .section-label.family { border-bottom-color: var(--primary); color: var(--primary); }
+    .section-label.student { border-bottom-color: var(--green); color: var(--green); }
+    .section-label.common { border-bottom-color: #9CA3AF; color: #4B5563; }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" style="color:var(--text-muted);">← 홈</a>
+    <span style="color:var(--border)">|</span>
+    <span style="color:var(--primary); font-weight:700;">레시피 30+</span>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <h1>🍳 바로 써먹는 레시피 30+</h1>
+    <p>복붙해서 내 데이터에 맞게 수정만 하면 되는 즉시 활용 자동화 예제들</p>
+  </div>
+</div>
+
+<main>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterRecipes('all', this)">전체</button>
+    <button class="filter-btn family" onclick="filterRecipes('work', this)">💼 직장인</button>
+    <button class="filter-btn family" onclick="filterRecipes('family', this)">🏠 가족/일상</button>
+    <button class="filter-btn student" onclick="filterRecipes('student', this)">📚 학생</button>
+    <button class="filter-btn" onclick="filterRecipes('common', this)">🔧 공통</button>
+  </div>
+
+  <!-- 공통 -->
+  <div class="section-label common">🔧 공통 — 누구나 쓰는 기본 레시피</div>
+  <div class="recipe-grid">
+
+    <div class="recipe-card" data-category="common">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag common">공통</span><span class="rtag common">파일 정리</span></div>
+        <h3>파일 이름 날짜+종류로 통일</h3>
+        <p>뒤죽박죽인 파일명을 YYYY-MM-DD_종류_설명 형식으로 일괄 변환</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 파일 모음</span>
+          <span class="io-badge">출력: 이름 변경된 파일</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini"><span class="k">[목표]</span> <span class="v">inbox/ 폴더 파일명을 날짜_종류_설명 형식으로 통일</span>
+<span class="k">[규칙]</span> <span class="v">형식: YYYY-MM-DD_종류_설명.확장자
+종류: 사진/문서/보고서/영수증/기타
+설명: 2~4글자 내용 요약</span>
+<span class="k">[안전]</span> <span class="v">backup/에 원본 복사 후 계획 먼저 보여줘</span></div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="common">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag common">공통</span><span class="rtag common">폴더 정리</span></div>
+        <h3>Downloads 폴더 자동 분류</h3>
+        <p>Downloads에 쌓인 파일들을 종류별 폴더로 자동 정리</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: Downloads 폴더</span>
+          <span class="io-badge">출력: 분류된 폴더</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini"><span class="k">[목표]</span> <span class="v">Downloads/ 파일을 확장자별 폴더로 분류</span>
+<span class="k">[규칙]</span> <span class="v">사진(jpg/png/heic) → 📁사진/
+문서(pdf/docx/pptx) → 📁문서/
+데이터(csv/xlsx) → 📁데이터/
+기타 → 📁기타/</span>
+<span class="k">[안전]</span> <span class="v">이동 전 계획 보여주기, 원본 삭제 금지</span></div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="common">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag common">공통</span><span class="rtag common">문서 처리</span></div>
+        <h3>PDF / 문서 텍스트 추출 + 요약</h3>
+        <p>PDF나 문서 파일을 텍스트로 추출하고 핵심 내용 요약</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: PDF/Word</span>
+          <span class="io-badge">출력: 요약 텍스트</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini"><span class="k">[목표]</span> <span class="v">문서 요약 + 핵심 포인트 5개 추출</span>
+<span class="k">[규칙]</span> <span class="v">요약: 3~5줄
+핵심 포인트: 번호 목록으로
+중요 숫자/날짜: 별도 섹션으로</span>
+<span class="k">[출력]</span> <span class="v">output/요약_원본파일명.txt</span></div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="common">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag common">공통</span><span class="rtag common">데이터</span></div>
+        <h3>CSV 데이터 정리 (중복 제거 + 형식 통일)</h3>
+        <p>엑셀/CSV 데이터의 중복 행 제거, 날짜 형식 통일, 빈 칸 처리</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: CSV/Excel</span>
+          <span class="io-badge">출력: 정리된 CSV</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty mid"><span>중급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini"><span class="k">[목표]</span> <span class="v">CSV 데이터 클렌징 후 정리된 파일 생성</span>
+<span class="k">[규칙]</span> <span class="v">- 완전히 동일한 행 제거
+- 날짜 형식 YYYY-MM-DD 통일
+- 빈 칸은 "없음"으로 채우기
+- 금액 컬럼: 숫자만 (쉼표/원 문자 제거)</span>
+<span class="k">[출력]</span> <span class="v">정리 전/후 변경 개수 요약 포함</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 직장인 -->
+  <div class="section-label work">💼 직장인 레시피</div>
+  <div class="recipe-grid">
+
+    <div class="recipe-card" data-category="work">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag work">직장인</span><span class="rtag work">회의</span></div>
+        <h3>회의록 → 할일 + 결정사항 표</h3>
+        <p>회의록 텍스트에서 결정사항/할일/담당자/기한을 자동 추출</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 회의록 텍스트</span>
+          <span class="io-badge">출력: 구조화 표</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">아래 회의록에서 4가지를 표로 만들어줘:
+1. 결정사항: 내용|담당자|기한
+2. 할일: 업무|담당자|기한|우선순위
+3. 보류: 내용|이유|다음논의일
+4. 요약: 3줄 이내
+
+담당자 없으면 "미정", 기한 불명확하면 "확인 필요"</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="work">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag work">직장인</span><span class="rtag work">보고서</span></div>
+        <h3>주간 업무 일지 → 보고서 초안</h3>
+        <p>이번 주 업무 메모를 입력하면 상사 제출용 주간 보고서 초안 생성</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 업무 메모</span>
+          <span class="io-badge">출력: 보고서 초안</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">이번 주 업무 메모 → 주간 보고서 초안:
+1. 완료 업무 (우선순위 높은 순)
+2. 진행 중 (진행률%)
+3. 다음 주 계획
+4. 이슈/리스크
+5. 지원 요청
+
+메모에 없는 내용은 [확인 필요]로 표시
+수치는 메모에 있는 것만 사용</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="work">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag work">직장인</span><span class="rtag work">파일관리</span></div>
+        <h3>거래처·프로젝트별 파일 자동 분류</h3>
+        <p>파일명에 포함된 거래처명/프로젝트명으로 자동 폴더 분류</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 파일 모음</span>
+          <span class="io-badge">출력: 분류된 폴더</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty mid"><span>중급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini"><span class="k">[규칙]</span>
+<span class="v">파일명에 "A사" 포함 → 📁거래처/A사/
+파일명에 "프로젝트X" 포함 → 📁프로젝트/프로젝트X/
+날짜별 하위 폴더: YYYY-MM/
+분류 불가 → 📁미분류/</span>
+<span class="k">[안전]</span> <span class="v">이동 전 계획 목록 확인, 원본 backup/</span></div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="work">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag work">직장인</span><span class="rtag work">이메일</span></div>
+        <h3>이메일 초안 자동 생성</h3>
+        <p>핵심 내용만 입력하면 격식체 업무 이메일 초안 생성</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 내용 메모</span>
+          <span class="io-badge">출력: 이메일 초안</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">아래 내용으로 업무 이메일 초안 만들어줘:
+수신: [이름/직책]
+목적: [요청/안내/확인 중 선택]
+핵심 내용: [내가 전달할 것]
+어조: 정중하고 간결하게
+분량: 3~5문장
+
+[추가 맥락: 여기에 입력]</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="work">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag work">직장인</span><span class="rtag work">분석</span></div>
+        <h3>판매 데이터 월간 리포트 자동화</h3>
+        <p>CSV 판매 데이터를 입력하면 월간 요약, 상위 품목, 트렌드 분석</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 판매 CSV</span>
+          <span class="io-badge">출력: 분석 리포트</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty mid"><span>중급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini"><span class="k">[분석 항목]</span>
+<span class="v">1. 월 총 매출 + 전월 대비
+2. 상위 5개 품목 (매출액 순)
+3. 고객별 매출 TOP 5
+4. 주차별 추이 (4주)
+5. 특이사항 (급증/급감 항목)</span>
+<span class="k">[주의]</span> <span class="v">계산은 데이터에 있는 값만 사용
+소수점 이하는 반올림</span></div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="work">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag work">직장인</span><span class="rtag work">문서</span></div>
+        <h3>다국어 문서 → 한국어 요약</h3>
+        <p>영어/일본어 등 외국어 문서를 한국어로 요약 번역</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 외국어 문서</span>
+          <span class="io-badge">출력: 한국어 요약</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">아래 [언어] 문서를 한국어로 요약해줘:
+1. 핵심 내용 5줄 요약
+2. 중요 숫자/날짜/이름 추출
+3. 우리가 취해야 할 행동 있으면 별도 표시
+4. 번역이 확실하지 않은 부분은 원문 병기</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 가족/일상 -->
+  <div class="section-label family">🏠 가족 · 일상 레시피</div>
+  <div class="recipe-grid">
+
+    <div class="recipe-card" data-category="family">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag family">가족</span><span class="rtag family">가계</span></div>
+        <h3>카드 내역 → 분류별 지출 리포트</h3>
+        <p>카드사 내역 CSV를 식비/교통/쇼핑 등으로 분류해 월간 리포트 생성</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 카드 내역 CSV</span>
+          <span class="io-badge">출력: 분류 리포트</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini"><span class="k">[분류]</span>
+<span class="v">식비: 음식점/카페/마트/배달
+교통: 주유/대중교통/택시
+쇼핑: 의류/전자/온라인
+의료: 병원/약국
+교육: 학원/교재/온라인강의
+기타: 나머지</span>
+<span class="k">[출력]</span> <span class="v">분류별 합계표 + 전체 합계 + TOP5 가맹점</span></div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="family">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag family">가족</span><span class="rtag family">일정</span></div>
+        <h3>주간 가족 일정 요약 + 준비물</h3>
+        <p>가족 각자의 일정 메모 → 요일별 정리 + 준비물 체크리스트 자동 생성</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 일정 메모</span>
+          <span class="io-badge">출력: 주간 요약표</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">이번 주 가족 일정이야. 처리해줘:
+1. 요일별 일정표 (월~일)
+2. 각 일정 옆에 예상 준비물 추가
+3. 가족별 색상 구분 (텍스트 표시)
+4. 이번 주 특이사항 요약 1줄
+
+[가족 구성원: 아버지/어머니/아들]
+[일정 메모: 여기에 입력]</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="family">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag family">가족</span><span class="rtag family">영수증</span></div>
+        <h3>영수증 사진 → 지출 목록</h3>
+        <p>영수증 사진 업로드 → 항목·금액·날짜 텍스트 추출 + 분류</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 영수증 사진</span>
+          <span class="io-badge">출력: 지출 목록</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">영수증 사진이야. 아래 형식으로 추출해줘:
+날짜 | 상호명 | 항목 | 금액 | 분류
+
+분류: 식비/생활용품/의료/교육/기타
+글씨가 흐릿한 항목은 [확인 필요] 표시
+합계 금액도 마지막에 추가해줘</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="family">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag family">가족</span><span class="rtag family">루틴</span></div>
+        <h3>개인 루틴 체크리스트 생성</h3>
+        <p>운동·식단·공부 등 반복 루틴을 체크리스트 형식으로 자동 생성</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 루틴 목록</span>
+          <span class="io-badge">출력: 체크리스트</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">내 일상 루틴으로 주간 체크리스트 만들어줘:
+
+[아침 루틴]: 예) 기상, 스트레칭 10분, 물 1잔
+[저녁 루틴]: 예) 독서 20분, 일기 쓰기
+[운동]: 예) 월수금 걷기 30분
+
+출력 형식:
+- 요일별 체크리스트 (월~일)
+- 각 항목 앞에 □ 체크박스
+- 완료 목표: 주당 몇 회</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="family">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag family">가족</span><span class="rtag family">아카이브</span></div>
+        <h3>사진·문서 연도/이벤트별 자동 분류</h3>
+        <p>파일 생성 날짜와 파일명 기반으로 연도/월/이벤트 폴더로 자동 정리</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 파일 모음</span>
+          <span class="io-badge">출력: 분류된 폴더</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty mid"><span>중급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini"><span class="k">[폴더 구조]</span>
+<span class="v">📁 아카이브/
+  📁 2024/
+    📁 01-1월/
+    📁 03-봄소풍/
+    📁 12-크리스마스/
+  📁 2023/</span>
+<span class="k">[규칙]</span> <span class="v">파일 생성일 기준 연도/월 분류
+파일명에 이벤트명 있으면 이벤트 폴더로</span></div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="family">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag family">가족</span><span class="rtag family">쇼핑</span></div>
+        <h3>장보기 목록 자동 생성</h3>
+        <p>이번 주 식단 계획을 입력하면 필요한 재료 목록을 자동으로 만들어줌</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 식단 계획</span>
+          <span class="io-badge">출력: 장보기 목록</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">이번 주 식단이야. 장보기 목록 만들어줘:
+[식단 입력: 월~일 아침/점심/저녁]
+
+출력:
+1. 재료별 총 필요량
+2. 마트 구역별 분류 (채소/육류/냉동/유제품/기타)
+3. 집에 있을 것 같은 재료는 (확인) 표시</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 학생 -->
+  <div class="section-label student">📚 학생 레시피</div>
+  <div class="recipe-grid">
+
+    <div class="recipe-card" data-category="student">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag student">학생</span><span class="rtag student">공부</span></div>
+        <h3>수업 노트 → 요약 + 핵심 개념 카드</h3>
+        <p>수업 필기를 요약하고 개념-설명-예시 형식의 개념 카드로 변환</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 수업 노트</span>
+          <span class="io-badge">출력: 요약+카드</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">수업 노트야. 3단계로 처리해줘:
+
+1단계: 핵심 5줄 요약 (쉬운 말로)
+2단계: 개념 카드 5개
+  - 개념명 / 한 문장 설명 / 실생활 예시
+3단계: 셀프 퀴즈 5개
+  - 객관식 3개 + 단답형 2개
+  - 각각 정답 + 해설 포함
+
+노트에 없는 내용 추가 금지
+불확실한 것은 "교재 확인 필요" 표시</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="student">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag student">학생</span><span class="rtag student">오답</span></div>
+        <h3>오답노트 자동화 + 복습 계획</h3>
+        <p>틀린 문제 정보 입력 → 오답 분석 + 유형 분류 + 반복 학습 계획 생성</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 오답 정보</span>
+          <span class="io-badge">출력: 오답노트</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">오늘 틀린 문제들이야. 오답노트 만들어줘:
+[오답 정보: 문제/내가 쓴 답/정답/내 생각]
+
+각 문제별:
+- 유형: 개념이해/계산/응용/암기
+- 틀린 이유 (내 생각 기반)
+- 핵심 개념 정리
+- 비슷한 문제 대비 포인트
+
+복습 계획:
+- 1일 후 / 3일 후 / 1주일 후 복습 목록</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="student">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag student">학생</span><span class="rtag student">시험</span></div>
+        <h3>시험 범위 통합 요약 + 체크리스트</h3>
+        <p>여러 단원 노트를 합쳐서 시험 대비 종합 정리와 확인 체크리스트 생성</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 여러 노트</span>
+          <span class="io-badge">출력: 시험 정리</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty mid"><span>중급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">시험 범위 노트들이야. 통합 정리해줘:
+[노트 1: 단원명 + 내용]
+[노트 2: ...]
+
+출력:
+1. 단원별 핵심 개념 정리표
+2. 자주 나오는 개념 TOP 10
+3. 헷갈리기 쉬운 개념 비교표
+4. 최종 점검 체크리스트 (이것만 알면 됨)</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="student">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag student">학생</span><span class="rtag student">에세이</span></div>
+        <h3>에세이 구조 설계 + 근거 체크</h3>
+        <p>주제와 자료를 입력하면 논리적 구조 설계, 근거 점검, 초안 방향 제시</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 주제+자료</span>
+          <span class="io-badge">출력: 구조 설계</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty mid"><span>중급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">에세이 주제: [주제 입력]
+분량: [A4 몇 장]
+
+아래 자료로 도와줘 (글은 내가 직접 씀):
+1. 핵심 논점 3개 추출
+2. 서론-본론-결론 구조 설계
+3. 각 단락 핵심 내용 1-2줄
+4. 각 주장의 근거가 충분한지 체크
+5. 사실과 의견 구분해서 표시
+
+[자료: 여기에 붙여넣기]</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="student">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag student">학생</span><span class="rtag student">학습기록</span></div>
+        <h3>주간 공부 기록 분석</h3>
+        <p>공부 시간 기록을 입력하면 과목별 분석, 패턴 파악, 다음 주 계획 제안</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 공부 기록</span>
+          <span class="io-badge">출력: 분석 + 계획</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">이번 주 공부 기록이야. 분석해줘:
+[요일별: 날짜, 과목, 시간, 공부 내용]
+
+분석 항목:
+1. 과목별 총 공부 시간 + 비율
+2. 가장 많이/적게 공부한 요일
+3. 이번 주 잘 된 점 + 개선할 점
+4. 다음 주 균형 잡힌 계획 제안
+
+내가 입력한 데이터만 기반으로 분석해줘</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="student">
+      <div class="recipe-card-top">
+        <div class="recipe-tags"><span class="rtag student">학생</span><span class="rtag student">영어</span></div>
+        <h3>영어 지문 → 단어 + 구조 분석</h3>
+        <p>영어 지문을 입력하면 어휘, 문장 구조, 내용 요약을 한국어로 분석</p>
+        <div class="recipe-io">
+          <span class="io-badge">입력: 영어 지문</span>
+          <span class="io-badge">출력: 분석 정리</span>
+        </div>
+      </div>
+      <div class="recipe-card-bottom">
+        <div class="difficulty easy"><span>초급</span></div>
+        <button class="expand-btn" onclick="toggleDetail(this)">위임문 보기 ↓</button>
+      </div>
+      <div class="recipe-detail">
+        <div class="code-mini">영어 지문이야. 한국어로 분석해줘:
+1. 핵심 어휘 10개 (영어-한국어-예문)
+2. 복잡한 문장 3개 구조 분석
+3. 지문 내용 한국어 요약 3줄
+4. 시험에 나올 만한 포인트 3개
+
+번역은 의역 금지, 직역+의미 설명으로</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="text-align:center; margin-top:40px; padding:24px; background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow);">
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:16px;">레시피를 활용할 준비가 됐다면 Week 0에서 시작하세요</p>
+    <a href="../curriculum/week0.html" style="display:inline-block; padding:12px 28px; background:var(--accent); color:white; border-radius:8px; font-weight:800;">Day 0 시작하기 →</a>
+  </div>
+
+</main>
+
+<script>
+function filterRecipes(category, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cards = document.querySelectorAll('.recipe-card');
+  cards.forEach(card => {
+    if (category === 'all' || card.dataset.category === category) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  document.querySelectorAll('.section-label').forEach(label => {
+    const map = { work: 'work', family: 'family', student: 'student', common: 'common' };
+    if (category === 'all') { label.style.display = 'block'; }
+    else { label.style.display = (label.classList.contains(map[category])) ? 'block' : 'none'; }
+  });
+}
+
+function toggleDetail(btn) {
+  const card = btn.closest('.recipe-card');
+  const detail = card.querySelector('.recipe-detail');
+  const isOpen = detail.classList.contains('open');
+  detail.classList.toggle('open');
+  btn.textContent = isOpen ? '위임문 보기 ↓' : '닫기 ↑';
+}
+</script>
+
+<footer style="background:#1E1E2E; color:rgba(255,255,255,0.6); padding:24px; text-align:center; font-size:0.85rem;">
+  <a href="../index.html" style="color:rgba(255,255,255,0.8);">← 홈</a> &nbsp;|&nbsp;
+  <a href="../templates/index.html" style="color:rgba(255,255,255,0.8);">템플릿</a> &nbsp;|&nbsp;
+  <a href="../curriculum/index.html" style="color:rgba(255,255,255,0.8);">커리큘럼</a>
+</footer>
+</body>
+</html>

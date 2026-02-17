@@ -1,12 +1,379 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code 실전 교육 프로그램 | AI로 일상을 자동화하다</title>
+  <style>
+    :root {
+      --primary: #2D3A8C;
+      --accent: #E87040;
+      --accent-light: #FFF3EC;
+      --green: #1A7F5A;
+      --green-light: #E8F8F2;
+      --bg: #F7F8FC;
+      --white: #FFFFFF;
+      --text: #1E1E2E;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* NAV */
+    nav { background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo { font-weight: 800; font-size: 1.1rem; color: var(--primary); }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 24px; font-size: 0.9rem; }
+    .nav-links a { color: var(--text-muted); font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); text-decoration: none; }
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, #1E2A7A 0%, #2D3A8C 50%, #3B4DB5 100%); color: white; padding: 80px 24px 70px; text-align: center; }
+    .hero-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; margin-bottom: 24px; }
+    .hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; line-height: 1.3; margin-bottom: 20px; }
+    .hero h1 em { color: #FFB347; font-style: normal; }
+    .hero p { font-size: 1.1rem; opacity: 0.88; max-width: 620px; margin: 0 auto 32px; }
+    .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 14px 28px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: #D4603A; text-decoration: none; color: white; }
+    .btn-ghost { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.4); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.25); text-decoration: none; color: white; }
+    .hero-stats { display: flex; gap: 40px; justify-content: center; margin-top: 48px; flex-wrap: wrap; }
+    .hero-stat { text-align: center; }
+    .hero-stat strong { display: block; font-size: 2rem; font-weight: 900; color: #FFB347; }
+    .hero-stat span { font-size: 0.85rem; opacity: 0.8; }
+
+    /* SECTION */
+    section { padding: 64px 24px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
+    .section-sub { color: var(--text-muted); margin-bottom: 40px; font-size: 1rem; }
+
+    /* WHO IS THIS FOR */
+    .personas { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .persona-card { background: var(--white); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); border-top: 4px solid var(--primary); }
+    .persona-card.orange { border-top-color: var(--accent); }
+    .persona-card.green { border-top-color: var(--green); }
+    .persona-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .persona-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
+    .persona-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 14px; }
+    .persona-tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { background: var(--bg); border-radius: 20px; padding: 4px 12px; font-size: 0.8rem; color: var(--text-muted); border: 1px solid var(--border); }
+
+    /* PROGRAM STRUCTURE */
+    .phase-list { display: flex; flex-direction: column; gap: 16px; }
+    .phase { background: var(--white); border-radius: var(--radius); padding: 24px 28px; box-shadow: var(--shadow); display: flex; align-items: flex-start; gap: 20px; }
+    .phase-num { background: var(--primary); color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; flex-shrink: 0; }
+    .phase-num.accent { background: var(--accent); }
+    .phase-num.green { background: var(--green); }
+    .phase-body h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
+    .phase-body p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px; }
+    .phase-link { font-size: 0.85rem; font-weight: 600; color: var(--primary); }
+    .phase-weeks { font-size: 0.8rem; color: var(--accent); font-weight: 700; background: var(--accent-light); padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; }
+
+    /* OUTCOMES */
+    .outcomes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .outcome-card { background: var(--white); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+    .outcome-num { font-size: 2rem; font-weight: 900; color: var(--primary); opacity: 0.15; margin-bottom: -8px; }
+    .outcome-card h4 { font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
+    .outcome-card p { font-size: 0.875rem; color: var(--text-muted); }
+
+    /* TRACKS */
+    .tracks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .track-card { border-radius: var(--radius); padding: 28px; }
+    .track-card.blue { background: #EEF1FF; border: 1px solid #C7CFFF; }
+    .track-card.orange { background: var(--accent-light); border: 1px solid #FFD4B8; }
+    .track-card.green { background: var(--green-light); border: 1px solid #B2E8D4; }
+    .track-card h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; }
+    .track-card ul { padding-left: 0; list-style: none; }
+    .track-card ul li { font-size: 0.9rem; color: var(--text); padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .track-card ul li::before { content: "▶ "; color: var(--primary); font-size: 0.7rem; }
+
+    /* CTA SECTION */
+    .cta-section { background: linear-gradient(135deg, #1E2A7A 0%, #2D3A8C 100%); color: white; text-align: center; padding: 64px 24px; }
+    .cta-section h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 12px; }
+    .cta-section p { opacity: 0.85; margin-bottom: 32px; font-size: 1rem; }
+
+    /* PRINCIPLE BOX */
+    .principle-box { background: var(--accent-light); border: 2px solid var(--accent); border-radius: var(--radius); padding: 28px 32px; text-align: center; margin: 40px 0; }
+    .principle-box p { font-size: 1.3rem; font-weight: 800; color: var(--accent); }
+    .principle-box span { display: block; font-size: 0.9rem; color: var(--text-muted); margin-top: 8px; font-weight: 400; }
+
+    /* FOOTER */
+    footer { background: var(--text); color: rgba(255,255,255,0.6); padding: 32px 24px; text-align: center; font-size: 0.85rem; }
+    footer a { color: rgba(255,255,255,0.8); }
+    footer strong { color: white; }
+
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .phase { flex-direction: column; }
+      .hero-stats { gap: 24px; }
+    }
+  </style>
 </head>
 <body>
-    <h1>Welcome to my website!</h1>
-    <p>This is a basic HTML page.</p>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">Claude Code <span>실전 교육</span></div>
+    <div class="nav-links">
+      <a href="#program">프로그램</a>
+      <a href="#tracks">트랙</a>
+      <a href="curriculum/index.html">커리큘럼</a>
+      <a href="templates/index.html">템플릿</a>
+      <a href="recipes/index.html">레시피</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">개발을 몰라도 OK · 4050 직장인 · 중고등학생 환영</div>
+  <h1>AI가 내 일을 대신하게 만들기<br><em>Claude Code 실전 교육 프로그램</em></h1>
+  <p>코딩 지식 제로여도 괜찮습니다. 반복하는 일, 귀찮은 루틴을 Claude Code로 자동화하는 법을 단계별로 배웁니다.</p>
+  <div class="hero-cta">
+    <a href="curriculum/week0.html" class="btn btn-primary">지금 시작하기 (30분 첫 성공)</a>
+    <a href="curriculum/index.html" class="btn btn-ghost">전체 커리큘럼 보기</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>6주</strong><span>전체 프로그램</span></div>
+    <div class="hero-stat"><strong>3개</strong><span>맞춤 트랙</span></div>
+    <div class="hero-stat"><strong>30+</strong><span>바로 쓰는 레시피</span></div>
+    <div class="hero-stat"><strong>0줄</strong><span>필수 코딩 지식</span></div>
+  </div>
+</div>
+
+<!-- WHO IS THIS FOR -->
+<section style="background: var(--white);">
+  <div class="section-inner">
+    <h2 class="section-title">이런 분들을 위한 프로그램입니다</h2>
+    <p class="section-sub">개발 경험 없어도, AI 경험 없어도 괜찮습니다.</p>
+    <div class="personas">
+      <div class="persona-card">
+        <div class="persona-icon">👩‍💼</div>
+        <h3>4050 직장인 · 주부</h3>
+        <p>매주 반복하는 보고서, 쌓이는 파일, 정리 안 되는 자료들. 클로드 코드로 이 반복을 한 번에 자동화합니다.</p>
+        <div class="persona-tag-list">
+          <span class="tag">회의록 자동 정리</span>
+          <span class="tag">파일 자동 분류</span>
+          <span class="tag">주간 보고 자동화</span>
+          <span class="tag">가계부 정리</span>
+        </div>
+      </div>
+      <div class="persona-card orange">
+        <div class="persona-icon">🎒</div>
+        <h3>중고등학생</h3>
+        <p>수업 노트를 요약하고, 오답노트를 만들고, 퀴즈를 생성하는 것까지. 공부 루틴을 AI와 함께 설계합니다.</p>
+        <div class="persona-tag-list">
+          <span class="tag">노트 요약 자동화</span>
+          <span class="tag">셀프 퀴즈 생성</span>
+          <span class="tag">오답노트 자동화</span>
+          <span class="tag">에세이 구조화</span>
+        </div>
+      </div>
+      <div class="persona-card green">
+        <div class="persona-icon">👨‍👩‍👦</div>
+        <h3>가족이 함께</h3>
+        <p>한 프로그램을 함께 배우고, 우리 가족만의 자동화를 만들어 나갑니다. 아내도, 아들도 각자의 트랙으로.</p>
+        <div class="persona-tag-list">
+          <span class="tag">가족 일정 관리</span>
+          <span class="tag">각자 맞춤 트랙</span>
+          <span class="tag">함께 캡스톤 완성</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CORE PRINCIPLE -->
+<section style="background: var(--bg);">
+  <div class="section-inner">
+    <div class="principle-box">
+      <p>결과 먼저 → 이유 나중 → 터미널은 필요할 때 → MCP는 수료 후</p>
+      <span>이 교육 프로그램의 핵심 설계 원칙 — 초보자 이탈을 막는 순서입니다</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAM STRUCTURE -->
+<section id="program" style="background: var(--bg);">
+  <div class="section-inner">
+    <h2 class="section-title">프로그램 전체 구조</h2>
+    <p class="section-sub">30분 첫 성공부터 내 삶에서 매주 돌아가는 자동화까지, 6단계로 배웁니다.</p>
+    <div class="phase-list">
+      <div class="phase">
+        <div class="phase-num accent">0</div>
+        <div class="phase-body">
+          <div class="phase-weeks">Day 1 · 30분</div>
+          <h3>30분 첫 성공 세션</h3>
+          <p>설치도, 코딩도 없이 "AI에게 내 일을 위임"하는 첫 경험. "나도 할 수 있다"는 확신을 첫날 가져갑니다.</p>
+          <a href="curriculum/week0.html" class="phase-link">→ 바로 시작하기</a>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">1</div>
+        <div class="phase-body">
+          <div class="phase-weeks">Week 1</div>
+          <h3>AI와 대화하는 법 — 위임문 작성</h3>
+          <p>좋은 위임이 좋은 결과를 만듭니다. 실패 사례 → 성공 사례 → 내 위임문 작성까지. AI Fluency 4D 프레임워크를 실습으로 배웁니다.</p>
+          <a href="curriculum/week1.html" class="phase-link">→ Week 1 보기</a>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">2</div>
+        <div class="phase-body">
+          <div class="phase-weeks">Week 2</div>
+          <h3>Claude Code 입문 — 첫 자동화 완성</h3>
+          <p>Claude Code가 하는 일을 이해하고, 터미널 없이 시작하는 기본 경로와 로컬 설치 확장 경로 중 선택해 첫 파일 자동화를 완성합니다.</p>
+          <a href="curriculum/week2.html" class="phase-link">→ Week 2 보기</a>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">3</div>
+        <div class="phase-body">
+          <div class="phase-weeks">Week 3 ~ 4</div>
+          <h3>페르소나 트랙 — 내 상황에 맞는 자동화</h3>
+          <p>가족/일상 트랙, 직장인 트랙, 학생 트랙 중 선택. 각자 상황에 맞는 레시피로 실제 쓰이는 자동화를 2개 이상 완성합니다.</p>
+          <a href="curriculum/tracks.html" class="phase-link">→ 트랙 선택하기</a>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num green">4</div>
+        <div class="phase-body">
+          <div class="phase-weeks">Week 5 ~ 6</div>
+          <h3>캡스톤 — "매주 돌아가는 자동화 1개" 완성</h3>
+          <p>명세서, 실행법, 검증 체크리스트, 실패 복구 방법까지 갖춘 완성된 자동화 1개를 만들어 제출합니다.</p>
+          <a href="curriculum/capstone.html" class="phase-link">→ 캡스톤 가이드</a>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num" style="background:#6B7280;">+</div>
+        <div class="phase-body">
+          <div class="phase-weeks">수료 후 선택</div>
+          <h3>심화 확장 — CLAUDE.md · MCP · 외부 도구 연결</h3>
+          <p>매번 설명하지 않아도 되는 나만의 규칙(CLAUDE.md), 구글 드라이브·캘린더 등 외부 도구 연결(MCP)까지 확장합니다.</p>
+          <a href="curriculum/advanced.html" class="phase-link">→ 심화 보기</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTCOMES -->
+<section style="background: var(--white);">
+  <div class="section-inner">
+    <h2 class="section-title">수료 후 할 수 있는 것</h2>
+    <p class="section-sub">이 4가지를 할 수 있으면 수료 기준을 달성한 것입니다.</p>
+    <div class="outcomes-grid">
+      <div class="outcome-card">
+        <div class="outcome-num">01</div>
+        <h4>반복 업무를 위임문으로 바꾸기</h4>
+        <p>내가 하던 반복 작업을 "절차(텍스트)"로 정리해 Claude에게 위임할 수 있다.</p>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-num">02</div>
+        <h4>로컬 파일/폴더 자동화</h4>
+        <p>Claude Code로 로컬 파일을 읽고, 정리하고, 변환하는 자동화를 만들 수 있다.</p>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-num">03</div>
+        <h4>결과 검증과 안전한 운영</h4>
+        <p>자동화 결과를 체크리스트로 검증하고, 실패 시 복구할 수 있다.</p>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-num">04</div>
+        <h4>(선택) 외부 도구 확장</h4>
+        <p>MCP/연동으로 문서, 일정, 협업 도구까지 자동화를 확장할 수 있다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRACKS -->
+<section id="tracks" style="background: var(--bg);">
+  <div class="section-inner">
+    <h2 class="section-title">3개 맞춤 트랙</h2>
+    <p class="section-sub">Week 3~4는 내 상황에 맞는 트랙을 선택해 진행합니다.</p>
+    <div class="tracks-grid">
+      <div class="track-card blue">
+        <h3>🏠 가족 · 일상 트랙</h3>
+        <ul>
+          <li>가족 일정 요약 + 준비물 체크리스트 자동 생성</li>
+          <li>영수증·지출 내역 정리 → 월간 리포트</li>
+          <li>사진·문서 아카이브 자동 분류</li>
+          <li>루틴 체크리스트 자동 생성 (운동/식단)</li>
+        </ul>
+      </div>
+      <div class="track-card orange">
+        <h3>💼 직장인 트랙 (4050)</h3>
+        <ul>
+          <li>회의록 → 결정사항·할일·기한 추출</li>
+          <li>주간 보고서 초안 자동 생성</li>
+          <li>거래처·프로젝트 파일 자동 정리</li>
+          <li>반복 보고서 수치·표 업데이트 자동화</li>
+        </ul>
+      </div>
+      <div class="track-card green">
+        <h3>📚 학생 트랙 (중고등학생)</h3>
+        <ul>
+          <li>수업 노트 → 요약 → 핵심개념 카드</li>
+          <li>오답노트 자동화 + 셀프 퀴즈 생성</li>
+          <li>에세이 초안: 자료 정리 → 구조 → 근거 체크</li>
+          <li>공부 루틴 기록 및 분석 자동화</li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:32px;">
+      <a href="curriculum/tracks.html" class="btn btn-primary" style="color:white;">트랙 상세 보기 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK LINKS -->
+<section style="background: var(--white);">
+  <div class="section-inner">
+    <h2 class="section-title">바로 쓰는 자료들</h2>
+    <p class="section-sub">이미 만들어진 템플릿과 레시피를 그대로 가져다 쓰세요.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px;">
+      <a href="templates/index.html" style="display:block; background:var(--bg); border-radius:var(--radius); padding:24px; border:1px solid var(--border); transition:all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:2rem;margin-bottom:10px;">📋</div>
+        <h3 style="font-size:1rem; font-weight:800; margin-bottom:6px;">위임문 템플릿</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted);">복붙해서 바로 쓰는 위임문 + 검증 체크리스트</p>
+      </a>
+      <a href="recipes/index.html" style="display:block; background:var(--bg); border-radius:var(--radius); padding:24px; border:1px solid var(--border); transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:2rem;margin-bottom:10px;">🍳</div>
+        <h3 style="font-size:1rem; font-weight:800; margin-bottom:6px;">레시피 30+개</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted);">파일 정리, 문서 요약, 보고서 자동화 등 즉시 활용 예제</p>
+      </a>
+      <a href="curriculum/capstone.html" style="display:block; background:var(--bg); border-radius:var(--radius); padding:24px; border:1px solid var(--border); transition:all 0.2s;" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:2rem;margin-bottom:10px;">🏆</div>
+        <h3 style="font-size:1rem; font-weight:800; margin-bottom:6px;">캡스톤 루브릭</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted);">완성된 자동화를 검증하는 4가지 기준</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>지금 바로 30분 첫 성공부터</h2>
+  <p>설치 없이, 코딩 없이. 지금 당장 내 귀찮은 일 하나를 AI에게 위임해봅니다.</p>
+  <a href="curriculum/week0.html" class="btn btn-primary">Day 0 시작하기 →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p><strong>Claude Code 실전 교육 프로그램</strong> &nbsp;|&nbsp; Powered by <a href="https://anthropic.com" target="_blank">Anthropic</a></p>
+  <p style="margin-top:8px;">공식 학습 자료: <a href="https://www.anthropic.com/learn" target="_blank">Anthropic Academy</a> &nbsp;·&nbsp; <a href="https://docs.anthropic.com/ko/docs/claude-code" target="_blank">Claude Code 공식 문서</a></p>
+</footer>
+
 </body>
 </html>
