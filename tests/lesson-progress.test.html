@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>레슨 진행 상태 테스트</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #333;
+            padding: 24px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        h1 { font-size: 1.4rem; margin-bottom: 6px; color: #1a1a2e; }
+        .subtitle { font-size: 0.85rem; color: #888; margin-bottom: 28px; }
+
+        .suite {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .suite-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f5e9;
+        }
+
+        .test-case {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 0.88rem;
+        }
+        .test-case:last-child { border-bottom: none; }
+
+        .icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .icon.pass { color: #2d6a4f; }
+        .icon.fail { color: #d62828; }
+        .icon.pending { color: #aaa; }
+
+        .test-name { flex: 1; }
+        .test-name.fail { color: #d62828; }
+        .test-name.pass { color: #333; }
+
+        .error-msg {
+            font-size: 0.78rem;
+            color: #d62828;
+            background: #fff5f5;
+            border-left: 3px solid #d62828;
+            padding: 6px 10px;
+            margin-top: 4px;
+            border-radius: 0 4px 4px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .summary {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        .summary .total { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; }
+        .summary .pass-count { font-size: 1.2rem; font-weight: 700; color: #2d6a4f; }
+        .summary .fail-count { font-size: 1.2rem; font-weight: 700; color: #d62828; }
+        .summary .label { font-size: 0.78rem; color: #888; margin-top: 2px; }
+
+        .run-btn {
+            display: inline-block;
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 24px;
+        }
+        .run-btn:hover { background: #1b4332; }
+
+        .back { font-size: 0.82rem; color: #2d6a4f; text-decoration: none; display: inline-block; margin-bottom: 16px; }
+        .back:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<a class="back" href="../lessons/react-router.html">← 레슨으로 돌아가기</a>
+<h1>레슨 진행 상태 테스트</h1>
+<p class="subtitle">체크박스 토글 및 localStorage 저장/복원 기능을 검증합니다.</p>
+
+<button class="run-btn" onclick="runAll()">테스트 실행</button>
+
+<div id="results"></div>
+<div id="summary"></div>
+
+<!-- 테스트에 사용할 숨겨진 DOM 픽스처 -->
+<div id="fixture" style="display:none">
+    <ul class="checklist">
+        <li><span class="check" onclick="fixtureToggle(this)"></span><span>항목 1</span></li>
+        <li><span class="check" onclick="fixtureToggle(this)"></span><span>항목 2</span></li>
+        <li><span class="check checked" onclick="fixtureToggle(this)">✓</span><span>항목 3 (초기 체크됨)</span></li>
+    </ul>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// 테스트 대상 로직 (lessons/react-router.html과 동일)
+// ─────────────────────────────────────────────
+const STORAGE_KEY = 'react-router-check-';
+
+function fixtureToggle(el) {
+    el.classList.toggle('checked');
+    el.textContent = el.classList.contains('checked') ? '✓' : '';
+    // localStorage 저장
+    const checks = document.querySelectorAll('#fixture .check');
+    checks.forEach((c, i) => {
+        localStorage.setItem(STORAGE_KEY + i, c.classList.contains('checked') ? '1' : '0');
+    });
+}
+
+function restoreFromStorage() {
+    const checks = document.querySelectorAll('#fixture .check');
+    checks.forEach((el, i) => {
+        const saved = localStorage.getItem(STORAGE_KEY + i);
+        if (saved === '1') {
+            el.classList.add('checked');
+            el.textContent = '✓';
+        } else if (saved === '0') {
+            el.classList.remove('checked');
+            el.textContent = '';
+        }
+    });
+}
+
+// ─────────────────────────────────────────────
+// 간단한 테스트 러너
+// ─────────────────────────────────────────────
+const suites = [];
+let currentSuite = null;
+
+function describe(name, fn) {
+    currentSuite = { name, tests: [] };
+    suites.push(currentSuite);
+    fn();
+    currentSuite = null;
+}
+
+function it(name, fn) {
+    currentSuite.tests.push({ name, fn });
+}
+
+function expect(actual) {
+    return {
+        toBe(expected) {
+            if (actual !== expected)
+                throw new Error(`expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+        },
+        toBeTruthy() {
+            if (!actual)
+                throw new Error(`expected truthy, got ${JSON.stringify(actual)}`);
+        },
+        toBeFalsy() {
+            if (actual)
+                throw new Error(`expected falsy, got ${JSON.stringify(actual)}`);
+        },
+        toContain(str) {
+            if (!actual.includes(str))
+                throw new Error(`expected "${actual}" to contain "${str}"`);
+        },
+        toBeNull() {
+            if (actual !== null)
+                throw new Error(`expected null, got ${JSON.stringify(actual)}`);
+        }
+    };
+}
+
+// ─────────────────────────────────────────────
+// 테스트 케이스 정의
+// ─────────────────────────────────────────────
+describe('체크박스 토글', () => {
+    it('체크되지 않은 항목을 클릭하면 checked 클래스가 추가된다', () => {
+        resetFixture();
+        const check = getCheck(0);
+        expect(check.classList.contains('checked')).toBeFalsy();
+        fixtureToggle(check);
+        expect(check.classList.contains('checked')).toBeTruthy();
+    });
+
+    it('체크된 항목을 다시 클릭하면 checked 클래스가 제거된다', () => {
+        resetFixture();
+        const check = getCheck(0);
+        fixtureToggle(check); // 체크
+        fixtureToggle(check); // 해제
+        expect(check.classList.contains('checked')).toBeFalsy();
+    });
+
+    it('체크하면 텍스트가 ✓으로 바뀐다', () => {
+        resetFixture();
+        const check = getCheck(0);
+        fixtureToggle(check);
+        expect(check.textContent).toBe('✓');
+    });
+
+    it('체크 해제하면 텍스트가 빈 문자열이 된다', () => {
+        resetFixture();
+        const check = getCheck(0);
+        fixtureToggle(check); // 체크
+        fixtureToggle(check); // 해제
+        expect(check.textContent).toBe('');
+    });
+});
+
+describe('localStorage 저장', () => {
+    it('체크하면 localStorage에 "1"이 저장된다', () => {
+        clearStorage();
+        resetFixture();
+        const check = getCheck(0);
+        fixtureToggle(check);
+        expect(localStorage.getItem(STORAGE_KEY + '0')).toBe('1');
+    });
+
+    it('체크 해제하면 localStorage에 "0"이 저장된다', () => {
+        clearStorage();
+        resetFixture();
+        const check = getCheck(0);
+        fixtureToggle(check); // 체크
+        fixtureToggle(check); // 해제
+        expect(localStorage.getItem(STORAGE_KEY + '0')).toBe('0');
+    });
+
+    it('여러 항목을 독립적으로 저장한다', () => {
+        clearStorage();
+        resetFixture();
+        fixtureToggle(getCheck(0));
+        fixtureToggle(getCheck(2));
+        expect(localStorage.getItem(STORAGE_KEY + '0')).toBe('1');
+        expect(localStorage.getItem(STORAGE_KEY + '1')).toBe('0');
+        expect(localStorage.getItem(STORAGE_KEY + '2')).toBe('1');
+    });
+});
+
+describe('localStorage 복원', () => {
+    it('저장된 체크 상태를 복원한다', () => {
+        clearStorage();
+        resetFixture();
+        localStorage.setItem(STORAGE_KEY + '1', '1');
+        restoreFromStorage();
+        expect(getCheck(1).classList.contains('checked')).toBeTruthy();
+        expect(getCheck(0).classList.contains('checked')).toBeFalsy();
+    });
+
+    it('저장된 해제 상태(0)로 덮어쓴다', () => {
+        resetFixture();
+        // 항목 2는 초기에 체크된 상태
+        localStorage.setItem(STORAGE_KEY + '2', '0');
+        restoreFromStorage();
+        expect(getCheck(2).classList.contains('checked')).toBeFalsy();
+    });
+
+    it('localStorage에 아무 값도 없으면 DOM 상태를 유지한다', () => {
+        clearStorage();
+        resetFixture();
+        // 항목 2는 초기 HTML 마크업상 체크됨
+        restoreFromStorage();
+        // localStorage 값이 없으면 건드리지 않아야 함
+        expect(getCheck(2).classList.contains('checked')).toBeTruthy();
+    });
+});
+
+describe('텍스트 동기화', () => {
+    it('복원 시 체크된 항목의 텍스트가 ✓이다', () => {
+        clearStorage();
+        resetFixture();
+        localStorage.setItem(STORAGE_KEY + '0', '1');
+        restoreFromStorage();
+        expect(getCheck(0).textContent).toBe('✓');
+    });
+
+    it('복원 시 해제된 항목의 텍스트가 비어 있다', () => {
+        clearStorage();
+        resetFixture();
+        localStorage.setItem(STORAGE_KEY + '2', '0');
+        restoreFromStorage();
+        expect(getCheck(2).textContent).toBe('');
+    });
+});
+
+// ─────────────────────────────────────────────
+// 헬퍼
+// ─────────────────────────────────────────────
+function getCheck(i) {
+    return document.querySelectorAll('#fixture .check')[i];
+}
+
+function resetFixture() {
+    document.querySelectorAll('#fixture .check').forEach((el, i) => {
+        if (i === 2) {
+            el.classList.add('checked');
+            el.textContent = '✓';
+        } else {
+            el.classList.remove('checked');
+            el.textContent = '';
+        }
+    });
+}
+
+function clearStorage() {
+    for (let i = 0; i < 6; i++) localStorage.removeItem(STORAGE_KEY + i);
+}
+
+// ─────────────────────────────────────────────
+// 실행 & 렌더링
+// ─────────────────────────────────────────────
+function runAll() {
+    const resultsEl = document.getElementById('results');
+    const summaryEl = document.getElementById('summary');
+    resultsEl.innerHTML = '';
+    summaryEl.innerHTML = '';
+
+    let totalPass = 0, totalFail = 0;
+
+    suites.forEach(suite => {
+        let passCount = 0, failCount = 0;
+        const testHTML = [];
+
+        suite.tests.forEach(test => {
+            let passed = false, errorMsg = '';
+            try {
+                test.fn();
+                passed = true;
+                passCount++;
+                totalPass++;
+            } catch (e) {
+                errorMsg = e.message;
+                failCount++;
+                totalFail++;
+            }
+
+            testHTML.push(`
+                <div class="test-case">
+                    <span class="icon ${passed ? 'pass' : 'fail'}">${passed ? '✓' : '✗'}</span>
+                    <div>
+                        <div class="test-name ${passed ? 'pass' : 'fail'}">${test.name}</div>
+                        ${!passed ? `<div class="error-msg">${errorMsg}</div>` : ''}
+                    </div>
+                </div>
+            `);
+        });
+
+        resultsEl.innerHTML += `
+            <div class="suite">
+                <div class="suite-title">${suite.name} &nbsp; <span style="font-weight:400;color:#888;font-size:0.82rem">${passCount}/${suite.tests.length} 통과</span></div>
+                ${testHTML.join('')}
+            </div>
+        `;
+    });
+
+    const allPass = totalFail === 0;
+    summaryEl.innerHTML = `
+        <div class="summary" style="border-top: 4px solid ${allPass ? '#2d6a4f' : '#d62828'};">
+            <div>
+                <div class="total">${totalPass + totalFail}</div>
+                <div class="label">전체</div>
+            </div>
+            <div>
+                <div class="pass-count">${totalPass}</div>
+                <div class="label">통과</div>
+            </div>
+            <div>
+                <div class="fail-count">${totalFail}</div>
+                <div class="label">실패</div>
+            </div>
+            <div style="flex:1;text-align:right;font-size:1.4rem;">
+                ${allPass ? '✅ 전체 통과' : '❌ 일부 실패'}
+            </div>
+        </div>
+    `;
+}
+</script>
+
+</body>
+</html>
