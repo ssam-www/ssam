@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>커리큘럼 진행 현황</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #2d6a4f;
+            color: white;
+            padding: 24px 32px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            opacity: 0.85;
+            font-size: 0.95rem;
+        }
+
+        .summary {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 28px;
+            flex: 1;
+            min-width: 160px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .summary-card .number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d6a4f;
+        }
+
+        .summary-card .label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 1.1rem;
+            color: #1a1a2e;
+        }
+
+        .section-progress {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .progress-bar-container {
+            background: #e8f5e9;
+            border-radius: 8px;
+            height: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #2d6a4f, #52b788);
+            border-radius: 8px;
+            transition: width 0.4s ease;
+        }
+
+        .topic-list {
+            list-style: none;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            gap: 12px;
+        }
+
+        .topic-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            margin-top: 1px;
+        }
+
+        .status-icon.done {
+            background-color: #2d6a4f;
+            color: white;
+        }
+
+        .status-icon.in-progress {
+            background-color: #f9c74f;
+            color: #333;
+        }
+
+        .status-icon.todo {
+            background-color: #e0e0e0;
+            color: #aaa;
+        }
+
+        .topic-info {
+            flex: 1;
+        }
+
+        .topic-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #222;
+        }
+
+        .topic-title.done {
+            color: #555;
+        }
+
+        .topic-desc {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .badge {
+            font-size: 0.72rem;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge.done { background: #d8f3dc; color: #2d6a4f; }
+        .badge.in-progress { background: #fff3cd; color: #856404; }
+        .badge.todo { background: #f0f0f0; color: #888; }
+
+        .updated {
+            text-align: right;
+            font-size: 0.78rem;
+            color: #aaa;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>커리큘럼 진행 현황</h1>
+    <p>학습 로드맵 및 진도 추적</p>
+</header>
+
+<div class="summary">
+    <div class="summary-card">
+        <div class="number">14</div>
+        <div class="label">전체 주제</div>
+    </div>
+    <div class="summary-card">
+        <div class="number">8</div>
+        <div class="label">완료</div>
+    </div>
+    <div class="summary-card">
+        <div class="number">3</div>
+        <div class="label">진행 중</div>
+    </div>
+    <div class="summary-card">
+        <div class="number">3</div>
+        <div class="label">예정</div>
+    </div>
+</div>
+
+<!-- Section 1 -->
+<div class="section">
+    <div class="section-header">
+        <h2>1단계 — 기초</h2>
+        <span class="section-progress">4 / 4 완료</span>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar" style="width: 100%;"></div>
+    </div>
+    <ul class="topic-list">
+        <li class="topic-item">
+            <span class="status-icon done">✓</span>
+            <div class="topic-info">
+                <div class="topic-title done">HTML &amp; CSS 기초</div>
+                <div class="topic-desc">시맨틱 마크업, 레이아웃, 반응형 디자인</div>
+            </div>
+            <span class="badge done">완료</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon done">✓</span>
+            <div class="topic-info">
+                <div class="topic-title done">JavaScript 기초</div>
+                <div class="topic-desc">변수, 함수, DOM 조작</div>
+            </div>
+            <span class="badge done">완료</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon done">✓</span>
+            <div class="topic-info">
+                <div class="topic-title done">Git &amp; GitHub</div>
+                <div class="topic-desc">버전 관리, 브랜치 전략, 협업 워크플로우</div>
+            </div>
+            <span class="badge done">완료</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon done">✓</span>
+            <div class="topic-info">
+                <div class="topic-title done">CLI &amp; 개발 환경 설정</div>
+                <div class="topic-desc">터미널, 패키지 매니저, 에디터 설정</div>
+            </div>
+            <span class="badge done">완료</span>
+        </li>
+    </ul>
+</div>
+
+<!-- Section 2 -->
+<div class="section">
+    <div class="section-header">
+        <h2>2단계 — 프론트엔드</h2>
+        <span class="section-progress">4 / 6 완료</span>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar" style="width: 67%;"></div>
+    </div>
+    <ul class="topic-list">
+        <li class="topic-item">
+            <span class="status-icon done">✓</span>
+            <div class="topic-info">
+                <div class="topic-title done">React 기초</div>
+                <div class="topic-desc">컴포넌트, Props, State, 생명주기</div>
+            </div>
+            <span class="badge done">완료</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon done">✓</span>
+            <div class="topic-info">
+                <div class="topic-title done">React Hooks</div>
+                <div class="topic-desc">useState, useEffect, useContext, 커스텀 훅</div>
+            </div>
+            <span class="badge done">완료</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon done">✓</span>
+            <div class="topic-info">
+                <div class="topic-title done">상태 관리</div>
+                <div class="topic-desc">Context API, Redux Toolkit 기초</div>
+            </div>
+            <span class="badge done">완료</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon done">✓</span>
+            <div class="topic-info">
+                <div class="topic-title done">CSS-in-JS &amp; 스타일링</div>
+                <div class="topic-desc">Styled-components, Tailwind CSS</div>
+            </div>
+            <span class="badge done">완료</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon in-progress">→</span>
+            <div class="topic-info">
+                <div class="topic-title">React Router &amp; SPA</div>
+                <div class="topic-desc">클라이언트 라우팅, 동적 경로, 보호된 라우트</div>
+            </div>
+            <span class="badge in-progress">진행 중</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon in-progress">→</span>
+            <div class="topic-info">
+                <div class="topic-title">API 연동 &amp; 데이터 페칭</div>
+                <div class="topic-desc">REST API, Axios, React Query</div>
+            </div>
+            <span class="badge in-progress">진행 중</span>
+        </li>
+    </ul>
+</div>
+
+<!-- Section 3 -->
+<div class="section">
+    <div class="section-header">
+        <h2>3단계 — 백엔드</h2>
+        <span class="section-progress">0 / 4 완료</span>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar" style="width: 0%;"></div>
+    </div>
+    <ul class="topic-list">
+        <li class="topic-item">
+            <span class="status-icon in-progress">→</span>
+            <div class="topic-info">
+                <div class="topic-title">Node.js &amp; Express</div>
+                <div class="topic-desc">서버 구성, 미들웨어, RESTful API 설계</div>
+            </div>
+            <span class="badge in-progress">진행 중</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon todo">○</span>
+            <div class="topic-info">
+                <div class="topic-title">데이터베이스 (SQL)</div>
+                <div class="topic-desc">PostgreSQL, 스키마 설계, ORM (Prisma)</div>
+            </div>
+            <span class="badge todo">예정</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon todo">○</span>
+            <div class="topic-info">
+                <div class="topic-title">인증 &amp; 보안</div>
+                <div class="topic-desc">JWT, OAuth2, 세션 관리</div>
+            </div>
+            <span class="badge todo">예정</span>
+        </li>
+        <li class="topic-item">
+            <span class="status-icon todo">○</span>
+            <div class="topic-info">
+                <div class="topic-title">배포 &amp; DevOps 기초</div>
+                <div class="topic-desc">Docker, CI/CD, 클라우드 배포</div>
+            </div>
+            <span class="badge todo">예정</span>
+        </li>
+    </ul>
+</div>
+
+<p class="updated">마지막 업데이트: 2026년 2월 17일</p>
+
+</body>
+</html>

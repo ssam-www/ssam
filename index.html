@@ -1,12 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ssam.github.io</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 48px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 { font-size: 1.6rem; margin-bottom: 8px; color: #1a1a2e; }
+        p { color: #666; margin-bottom: 28px; font-size: 0.95rem; }
+        a.btn {
+            display: inline-block;
+            background-color: #2d6a4f;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        a.btn:hover { background-color: #1b4332; }
+    </style>
 </head>
 <body>
-    <h1>Welcome to my website!</h1>
-    <p>This is a basic HTML page.</p>
+    <div class="card">
+        <h1>ssam.github.io</h1>
+        <p>개인 GitHub Pages 사이트에 오신 것을 환영합니다.</p>
+        <a class="btn" href="curriculum.html">커리큘럼 진행 현황 보기</a>
+    </div>
 </body>
 </html>
